@@ -1,5 +1,6 @@
 import os
 import unittest
+from unittest.mock import patch
 from urllib.parse import parse_qs, urlparse
 
 from mcp.client import Client
@@ -10,6 +11,7 @@ from geekbi_shein_mcp import __version__
 from geekbi_shein_mcp.auth import ActionRequired, AuthManager, VERSION_HEADER, default_auth_path
 from geekbi_shein_mcp.client import GeekBIClient
 from geekbi_shein_mcp.config import PLATFORM_SLUG, RESULT_WINDOW, TOOL_SPECS
+from geekbi_shein_mcp.images import read_image
 from geekbi_shein_mcp.models import MODEL_CLASSES
 from geekbi_shein_mcp.server import _execute, mcp
 
@@ -57,6 +59,18 @@ class ContractTests(unittest.TestCase):
         client.query(endpoint, query, "测试查询")
         params = parse_qs(urlparse(auth.urls[0]).query)
         self.assertEqual(["1"], params["page"])
+
+    def test_all_business_tools_default_to_live_us_site(self):
+        for key, model in MODEL_CLASSES.items():
+            if "siteId" in model.model_fields:
+                with self.subTest(tool=key):
+                    self.assertEqual(2, model.model_fields["siteId"].default)
+
+    def test_protocol_relative_image_url_uses_https(self):
+        expected = (b"image", "image/jpeg", "image.jpg")
+        with patch("geekbi_shein_mcp.images._read_remote", return_value=expected) as remote:
+            self.assertEqual(expected, read_image("//img.example.test/image.jpg", 5))
+        remote.assert_called_once_with("https://img.example.test/image.jpg", 5)
 
     def test_action_required_is_structured(self):
         def requires_action():

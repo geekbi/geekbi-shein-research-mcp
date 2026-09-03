@@ -123,6 +123,8 @@ def _read_local(source: str) -> tuple[bytes, str, str]:
 
 
 def read_image(source: str, timeout: float) -> tuple[bytes, str, str]:
+    if source.startswith("//"):
+        source = "https:" + source
     if source.startswith("data:"):
         return _read_data_uri(source)
     if source.startswith("base64:"):

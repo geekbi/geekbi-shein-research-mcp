@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "geekbi-shein-research-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "极鲸云 SHEIN 电商数据分析 MCP 服务"
 readme = "README.md"
 requires-python = ">=3.10"
