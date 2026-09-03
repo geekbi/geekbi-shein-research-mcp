@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "geekbi-shein-research-mcp"
+version = "0.1.0"
+description = "极鲸云 SHEIN 电商数据分析 MCP 服务"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "mcp[cli]>=2.0.0,<3.0.0",
+  "platformdirs>=4.0,<5.0",
+  "pydantic>=2.10,<3.0",
+]
+
+[project.scripts]
+geekbi-shein-mcp = "geekbi_shein_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/geekbi_shein_mcp"]
